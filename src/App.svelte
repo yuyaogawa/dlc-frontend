@@ -1,8 +1,8 @@
 <script>
   import QrCode from 'svelte-qrcode'
   export let name
-  const BASE_URL_DLC = 'http://localhost:3000'
-  const BASE_URL_ORACLE = 'http://localhost:4000'
+  const BASE_URL_DLC = URL_DLC
+  const BASE_URL_ORACLE = URL_ORACLE
   let result
   let event
   let loading = false
