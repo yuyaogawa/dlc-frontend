@@ -1,6 +1,8 @@
 <script>
   import QrCode from 'svelte-qrcode'
   export let name
+  const BASE_URL_DLC = 'http://localhost:3000'
+  const BASE_URL_ORACLE = 'http://localhost:4000'
   let result
   let event
   let loading = false
@@ -17,7 +19,7 @@
     }
     console.log(values)
 
-    const contract = await fetch('http://localhost:3000/dlc', {
+    const contract = await fetch(BASE_URL_DLC + '/dlc', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,10 +38,10 @@
   }
   async function getEvent() {
     result = null
-    const res = await fetch(`http://localhost:4000/events`)
+    const res = await fetch(BASE_URL_ORACLE + `/events`)
     const events = await res.json()
 
-    const res2 = await fetch(`http://localhost:4000/events/` + events[0])
+    const res2 = await fetch(BASE_URL_ORACLE + `/events/` + events[0])
     event = await res2.json()
 
     if (res.ok) {
@@ -55,6 +57,11 @@
   }
 </script>
 
+<svelte:head>
+  <title>DLC MEETS LIGHTNING</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <html lang="en" />
+</svelte:head>
 <main>
   <h1>Hello {name}!</h1>
   <p>
@@ -64,12 +71,35 @@
   {#await promise}
     <p>Loading...</p>
   {:then event}
-    <p>eventName: {event.eventName}</p>
-    <p>outcomes: {event.outcomes}</p>
-    <p>nonces: {event.nonces}</p>
-    <p>maturationTime: {event.maturationTime}</p>
-    <p>pubkey: {pubkey}</p>
-
+  <div>
+    <table>
+      <tr>
+        <th>name</th>
+        <th style="width:70%">value</th>
+      </tr>
+      <tr>
+        <td>eventName</td>
+        <td>{event.eventName}</td>
+      </tr>
+      <tr>
+        <td>outcomes</td>
+        <td>{event.outcomes}</td>
+      </tr>
+      <tr>
+        <td>nonces</td>
+        <td>{event.nonces}</td>
+      </tr>
+      <tr>
+        <td>maturationTime</td>
+        <td>{event.maturationTime}</td>
+      </tr>
+      <tr>
+        <td>pubkey</td>
+        <td>{pubkey}</td>
+      </tr>
+    </table>
+  </div>
+    <p>Select Yes/No and provide your invoice below and submit.</p>
     <form on:submit|preventDefault={onSubmit}>
       <select name="outcomes" id="outcomes">
         <option value="Yes">Yes</option>
@@ -108,10 +138,28 @@
   {/await}
 
   {#if result}
-    <p>x (preimage): {result.x}</p>
-    <p>Ex(Encripted x): {result.Ex}</p>
-    <p>hash of x: {result.hashX}</p>
-    <p>hodlinvoice: {result.invoice}</p>
+  <table style="width:100%">
+    <tr>
+      <th>name</th>
+      <th style="width:70%">value</th>
+    </tr>
+    <tr>
+      <td>x (preimage)</td>
+      <td> {result.x}</td>
+    </tr>
+    <tr>
+      <td>Ex(Encripted x)</td>
+      <td>{result.Ex}</td>
+    </tr>
+    <tr>
+      <td>sha256(x)</td>
+      <td>{result.hashX}</td>
+    </tr>
+    <tr>
+      <td>hodlinvoice</td>
+      <td>{result.invoice}</td>
+    </tr>
+  </table>
     <QrCode value={result.invoice} />
   {/if}
 </main>
@@ -119,8 +167,7 @@
 <style>
   main {
     text-align: center;
-    padding: 1em;
-    max-width: 240px;
+    max-width: 340px;
     margin: 0 auto;
   }
 
@@ -136,4 +183,17 @@
       max-width: none;
     }
   }
+  table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even){background-color: #f2f2f2}
 </style>
