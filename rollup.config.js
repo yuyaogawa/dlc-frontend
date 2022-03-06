@@ -42,7 +42,8 @@ export default {
 	plugins: [
 		replace({
             URL_DLC: JSON.stringify(process.env.URL_DLC),
-			URL_ORACLE: JSON.stringify(process.env.URL_ORACLE)
+			URL_ORACLE: JSON.stringify(process.env.URL_ORACLE),
+			ORACLE_PUBKEY: JSON.stringify(process.env.ORACLE_PUBKEY)
         }),
 		svelte({
 			compilerOptions: {
