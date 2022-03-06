@@ -6,8 +6,7 @@
   let result
   let event
   let loading = false
-  const pubkey =
-    'e7887373eb29184aa104e20ff5342d0019791ad656896ec573f5e9da96b001c6'
+  const pubkey = ORACLE_PUBKEY
   async function onSubmit(e) {
     loading = true
     const formData = new FormData(e.target)
