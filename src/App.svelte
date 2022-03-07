@@ -1,4 +1,5 @@
 <script>
+  import Countdown from 'svelte-countdown';
   import QrCode from 'svelte-qrcode'
   export let name
   const BASE_URL_DLC = URL_DLC
@@ -57,20 +58,35 @@
 </script>
 
 <svelte:head>
-  <title>DLC MEETS LIGHTNING</title>
+  <title>OP_DLC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <html lang="en" />
 </svelte:head>
 <main>
-  <h1>Hello {name}!</h1>
+  <h1>{name}</h1>
   <p>
     This is Binary option style DLC serivce where you can bet on BTC/USD price.
   </p>
   <button on:click={handleClick}> reload </button>
+
   {#await promise}
     <p>Loading...</p>
   {:then event}
   <div>
+    <Countdown from="{event.maturationTime}" format="YYYY-MM-DD H:m:s" let:remaining>
+      <div class="whatever">
+          {#if remaining.done === false}
+          <h2>
+          <span>{remaining.hours} hours</span>
+          <span>{remaining.minutes} minutes</span>
+          <span>{remaining.seconds} seconds</span>
+          </h2>
+          {:else}
+          <h2>The maturationTime has come!</h2>
+          {/if}
+      </div>
+    </Countdown>
+
     <table>
       <tr>
         <th>name</th>
@@ -79,6 +95,10 @@
       <tr>
         <td>eventName</td>
         <td>{event.eventName}</td>
+      </tr>
+      <tr>
+        <td>strike price</td>
+        <td>{event.eventName.match(/\[(.*?)\]/g)} USD</td>
       </tr>
       <tr>
         <td>outcomes</td>
@@ -143,11 +163,19 @@
       <th style="width:70%">value</th>
     </tr>
     <tr>
+      <td>outcome</td>
+      <td> {result.m}</td>
+    </tr>
+    <tr>
+      <td>sG (SigPoint of outcome)</td>
+      <td> {result.sG}</td>
+    </tr>
+    <tr>
       <td>x (preimage)</td>
       <td> {result.x}</td>
     </tr>
     <tr>
-      <td>Ex(Encripted x)</td>
+      <td>Ex (x encrypted by sG)</td>
       <td>{result.Ex}</td>
     </tr>
     <tr>
