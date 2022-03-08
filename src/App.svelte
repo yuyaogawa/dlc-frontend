@@ -19,7 +19,7 @@
     }
     console.log(values)
 
-    const contract = await fetch(BASE_URL_DLC + '/dlc', {
+    const response = await fetch(BASE_URL_DLC + '/dlc', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,8 +32,12 @@
         invoice: values.invoice,
       }),
     })
+
+    if(response.status !== 200){
+      console.log(response.message)
+    }
     loading = false
-    result = await contract.json()
+    result = await response.json()
     return result
   }
   async function getEvent() {
@@ -156,7 +160,7 @@
     <p style="color: red">{error.message}</p>
   {/await}
 
-  {#if result}
+  {#if result !== null && result.status !== 'error'}
   <table style="width:100%">
     <tr>
       <th>name</th>
@@ -187,7 +191,9 @@
       <td>{result.invoice}</td>
     </tr>
   </table>
-    <QrCode value={result.invoice} />
+  <QrCode value={result.invoice} />
+  {:else if result !== null && result.status === 'error'}
+    <p style="color: red">{result.message}</p>
   {/if}
 </main>
 
