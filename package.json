@@ -6,13 +6,14 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "format": "prettier --write --plugin-search-dir=. src/App.svelte",
+    "format": "prettier --write --plugin-search-dir=. ./src",
     "lint": "eslint --fix src/App.svelte"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-replace": "^4.0.0",
+    "carbon-components-svelte": "^0.60.0",
     "eslint": "^8.10.0",
     "eslint-plugin-svelte3": "^3.4.1",
     "prettier": "^2.5.1",
@@ -28,6 +29,7 @@
     "dotenv": "^16.0.0",
     "sirv-cli": "^2.0.0",
     "svelte-countdown": "^1.0.0",
-    "svelte-qrcode": "^1.0.0"
+    "svelte-qrcode": "^1.0.0",
+    "svelte-spa-router": "^3.2.0"
   }
 }
