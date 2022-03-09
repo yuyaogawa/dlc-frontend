@@ -125,7 +125,10 @@
         </tr>
       </table>
     </div>
-    <p>Select Yes/No and provide your invoice below and submit.</p>
+    <br/>
+    <h4>Select Yes/No and provide your invoice below and submit.</h4>
+    <p>Purchase (meaning making a payment to the holdinvoice) is only accepted 1 mins before the maturation time.</p>
+
     <form on:submit|preventDefault={onSubmit}>
       <select name="outcomes" id="outcomes">
         <option value="Yes">Yes</option>
@@ -159,6 +162,7 @@
         <input type="submit" name="submit" id="submit" value="Submit" />
       {/if}
     </form>
+
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
@@ -234,5 +238,9 @@
 
   tr:nth-child(even) {
     background-color: #f2f2f2;
+  }
+
+  form {
+    padding: 8px;
   }
 </style>

@@ -27,6 +27,7 @@
   <HeaderNav>
     <HeaderNavItem href="#/" text="DLC" />
     <HeaderNavItem href="#/event" text="Event" />
+	<HeaderNavItem href="#/faq" text="FAQ" />
   </HeaderNav>
 </Header>
 
@@ -34,6 +35,7 @@
   <SideNavItems>
     <HeaderNavItem href="#/" text="DLC" />
     <HeaderNavItem href="#/event" text="Event" />
+	<HeaderNavItem href="#/faq" text="FAQ" />
   </SideNavItems>
 </SideNav>
 <Content>
