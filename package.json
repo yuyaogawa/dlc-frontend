@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.0",
+    "file-saver": "^2.0.5",
     "sirv-cli": "^2.0.0",
     "svelte-countdown": "^1.0.0",
     "svelte-qrcode": "^1.0.0",
