@@ -52,6 +52,7 @@
   async function getEvent() {
     result = null
     visible = false
+    position = false
     const res = await fetch(BASE_URL_ORACLE + `/events`)
     const events = await res.json()
 
