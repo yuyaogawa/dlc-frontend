@@ -119,61 +119,10 @@
   {#await promise}
     <p>Loading...</p>
   {:then event}
-    <div>
-      <Countdown
-        from={event.maturationTime}
-        format="YYYY-MM-DD H:m:s"
-        let:remaining
-      >
-        <div class="whatever">
-          {#if remaining.done === false}
-            <h2>
-              <span>{remaining.hours} hours</span>
-              <span>{remaining.minutes} minutes</span>
-              <span>{remaining.seconds} seconds</span>
-            </h2>
-          {:else}
-            <h2>The maturationTime has come!</h2>
-          {/if}
-        </div>
-      </Countdown>
-
-      <table>
-        <tr>
-          <th>name</th>
-          <th style="width:70%">value</th>
-        </tr>
-        <tr>
-          <td>eventName</td>
-          <td>{event.eventName}</td>
-        </tr>
-        <tr>
-          <td>strike price</td>
-          <td>{event.eventName.match(/\[(.*?)\]/g)} USD</td>
-        </tr>
-        <tr>
-          <td>outcomes</td>
-          <td>{event.outcomes}</td>
-        </tr>
-        <tr>
-          <td>nonces</td>
-          <td>{event.nonces}</td>
-        </tr>
-        <tr>
-          <td>maturationTime</td>
-          <td>{event.maturationTime}</td>
-        </tr>
-        <tr>
-          <td>pubkey</td>
-          <td>{pubkey}</td>
-        </tr>
-      </table>
-    </div>
-    <br/>
     <h4><u>Select Yes/No and provide your invoice for Premium below and submit.</u></h4>
     <p>Currently premium and option price are fixed as following,</p>
-    <p>Premium: <span>1000 sats</span></p>
-    <p>Option price: <span>2020 sats</span></p>
+    <p>Premium: <span class='price'>1000 sats</span></p>
+    <p>Option price: <span class='price'>2020 sats</span></p>
     <p>Trading (meaning making a payment to the holdinvoice) is only accepted 1 minute before the maturation time.</p>
 
     <form on:submit|preventDefault={onSubmit}>
@@ -210,11 +159,25 @@
       {/if}
     </form>
 
-  {:catch error}
-    <p style="color: red">{error.message}</p>
-  {/await}
+    <Countdown
+    from={event.maturationTime}
+    format="YYYY-MM-DD H:m:s"
+    let:remaining
+    >
+      <div class="whatever">
+        {#if remaining.done === false}
+          <h4>
+            <span>{remaining.hours} hours</span>
+            <span>{remaining.minutes} minutes</span>
+            <span>{remaining.seconds} seconds</span>
+          </h4>
+        {:else}
+          <h4>The maturationTime has come!</h4>
+        {/if}
+      </div>
+    </Countdown>
 
-  {#if result !== null && result.status !== 'error'}
+    {#if result !== null && result.status !== 'error'}
     <table style="width:100%">
       <tr>
         <th>name</th>
@@ -245,9 +208,9 @@
         <td>{result.invoice}</td>
       </tr>
     </table>
-    <button on:click={download}> Download </button>
-    <br />
+    <p><button on:click={download}> Download </button></p>
     {#if visible}
+      <p>Pay to this holdinvoice</p>
       <QrCode value={result.invoice} />
     {/if}
   {:else if result !== null && result.status === 'error'}
@@ -258,6 +221,44 @@
     <p>Position is opened</p>
     <p><a href="/#/position?hashX={result.hashX}" target="_blank">Check the status</a></p>
   {/if}
+
+    <div>
+      <table>
+        <tr>
+          <th>name</th>
+          <th style="width:70%">value</th>
+        </tr>
+        <tr>
+          <td>eventName</td>
+          <td>{event.eventName}</td>
+        </tr>
+        <tr>
+          <td>strike price</td>
+          <td>{event.eventName.match(/\[(.*?)\]/g)} USD</td>
+        </tr>
+        <tr>
+          <td>outcomes</td>
+          <td>{event.outcomes}</td>
+        </tr>
+        <tr>
+          <td>nonces</td>
+          <td>{event.nonces}</td>
+        </tr>
+        <tr>
+          <td>maturationTime</td>
+          <td>{event.maturationTime}</td>
+        </tr>
+        <tr>
+          <td>pubkey</td>
+          <td>{pubkey}</td>
+        </tr>
+      </table>
+    </div>
+    <br/>
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
+
 </main>
 
 <style>
@@ -274,7 +275,7 @@
     font-weight: 100;
   }
 
-  span {
+  .price {
     color: #ff3e00;
     font-size: 1.2em;
     font-weight: 100;
