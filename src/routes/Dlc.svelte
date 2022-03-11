@@ -170,8 +170,11 @@
       </table>
     </div>
     <br/>
-    <h4>Select Yes/No and provide your invoice below and submit.</h4>
-    <p>Purchase (meaning making a payment to the holdinvoice) is only accepted 1 mins before the maturation time.</p>
+    <h4><u>Select Yes/No and provide your invoice for Premium below and submit.</u></h4>
+    <p>Currently premium and option price are fixed as following,</p>
+    <p>Premium: <span>1000 sats</span></p>
+    <p>Option price: <span>2020 sats</span></p>
+    <p>Trading (meaning making a payment to the holdinvoice) is only accepted 1 minute before the maturation time.</p>
 
     <form on:submit|preventDefault={onSubmit}>
       <select name="outcomes" id="outcomes">
@@ -197,7 +200,7 @@
         type="text"
         name="invoice"
         id="invoice"
-        placeholder="Payout invoice with 100 sats"
+        placeholder="Paste your invoice"
         required
       />
       {#if loading}
@@ -268,6 +271,12 @@
     color: #ff3e00;
     text-transform: uppercase;
     font-size: 4em;
+    font-weight: 100;
+  }
+
+  span {
+    color: #ff3e00;
+    font-size: 1.2em;
     font-weight: 100;
   }
 

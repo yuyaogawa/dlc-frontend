@@ -2,16 +2,17 @@
   const BASE_URL_DLC = URL_DLC
   let result
   let loading = false
-  let payment_hash
+  let payment_hash = null
   async function getPosition(payment_hash) {
-    console.log(window.location.href)
-    const path = window.location.href
-    payment_hash = path.split('hashX=')[1];
-    console.log(payment_hash)
-    
+
     if(payment_hash == null){
-      throw new Error('')
+      const path = window.location.href
+      payment_hash = path.split('hashX=')[1];
+      if(payment_hash == null){
+        throw new Error('')
+      }
     }
+
     const position = await fetch(BASE_URL_DLC + `/dlc?` + new URLSearchParams({
       hashX: payment_hash,
     }))
@@ -46,7 +47,7 @@
 <main>
   <form on:submit|preventDefault={handleClick}>
     <input type="text" name="payment_hash" id="payment_hash" placeholder="hashX" bind:this={payment_hash} required />
-    <input type="submit" name="submit" id="submit" value="Submit" />
+    <input type="submit" name="submit" id="submit" value="Search" />
   </form>
   {#await promise}
     <p>Loading...</p>

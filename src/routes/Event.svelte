@@ -1,7 +1,7 @@
 <script>
   const BASE_URL_ORACLE = URL_ORACLE
   const pubkey = ORACLE_PUBKEY
-  const MAX_LOADING_EVENTS = 5
+  const MAX_LOADING_EVENTS = 15
   let listevent = []
   async function getEvent() {
     const res = await fetch(BASE_URL_ORACLE + `/events`)

@@ -5,9 +5,12 @@
   // Import the list of routes
   import routes from './routes'
   import Header from './components/Header.svelte'
+  import Footer from './components/Footer.svelte'
 </script>
 
 <Header />
 
 <!-- Show the router -->
 <Router {routes} />
+
+<Footer />
