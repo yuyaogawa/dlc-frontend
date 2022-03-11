@@ -15,12 +15,14 @@
     Grid,
     Row,
     Column,
+    Tag,
   } from 'carbon-components-svelte'
 
   let isSideNavOpen = false
 </script>
 
 <Header persistentHamburgerMenu={true} platformName="DLC-LN" bind:isSideNavOpen>
+  <Tag type="cyan"> Testnet </Tag>
   <svelte:fragment slot="skip-to-content">
     <SkipToContent />
   </svelte:fragment>
