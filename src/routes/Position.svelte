@@ -61,7 +61,13 @@
           <th>eventName</th>
         </tr>
           <tr>
-            <td>{(result.status == 'CANCELED' && result.paid) ? 'You win' : '-'}  </td>
+            {#if (result.status == 'CANCELED' && result.paid)}
+              <td>You win</td>
+            {:else if ((result.status == 'SETTLED' && result.paid))}
+              <td>You lose</td>
+            {:else}
+              <td>-</td>
+            {/if}
             <td>{result.status}</td>
             <td>{result.paid}</td>
             <td>{result.eventName}</td>
