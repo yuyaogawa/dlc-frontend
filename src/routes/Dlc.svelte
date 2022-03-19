@@ -1,4 +1,7 @@
+<LibLoader url="https://s3.tradingview.com/tv.js"
+on:loaded="{onLoaded}" />
 <script>
+  import LibLoader from '../components/LibLoader.svelte'
   import Countdown from 'svelte-countdown'
   import QrCode from 'svelte-qrcode'
   import { saveAs } from 'file-saver';
@@ -102,6 +105,27 @@
 
     // Save the file
     saveAs(fileToSave, fileName);
+  }
+
+
+  function onLoaded() {
+    new TradingView.widget(
+      {
+        //"autosize": true,
+        "width": 980,
+        "height": 610,
+        "symbol": "BITSTAMP:BTCUSD",
+        "interval": "1",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "2",
+        "locale": "en",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "container_id": "tradingview_5723e"
+      }
+    );
   }
 </script>
 
@@ -259,6 +283,11 @@
     <p style="color: red">{error.message}</p>
   {/await}
 
+
+  <div class="tradingview-widget-container">
+    <div id="tradingview_5723e"></div>
+    <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BTCUSD/?exchange=BITSTAMP" rel="noopener" target="_blank"><span class="blue-text">BTCUSD Chart</span></a> by TradingView</div>
+  </div>
 </main>
 
 <style>
