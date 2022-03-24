@@ -4,7 +4,7 @@
 
   <h3>How to play?</h3>
   <ul>
-    <li>1. Select Yes/No and provide an invoice for your premium</li>
+    <li>1. Select HIGH/LOW and provide an invoice for your premium</li>
     <li>2. Pay to holdinvoice and wait the result</li>
   </ul>
   <p>That is all! Once Oracle signs the outcome we settle/cancel the held invoice.</p>
