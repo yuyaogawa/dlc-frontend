@@ -1,5 +1,4 @@
 <script>
-  import 'carbon-components-svelte/css/white.css'
   import {
     Header,
     HeaderNav,
