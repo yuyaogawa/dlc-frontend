@@ -8,6 +8,7 @@ on:loaded="{onLoaded}" />
 
   let selectedIndex = 0;
 
+  import copy from "clipboard-copy";
   import LibLoader from '../components/LibLoader.svelte'
   import Countdown from 'svelte-countdown'
   import QrCode from 'svelte-qrcode'
@@ -263,7 +264,7 @@ on:loaded="{onLoaded}" />
         <p>Pay to this holdinvoice</p>
         <div style="display: flex;">
           <TextInput disabled name="holdinvoice" id="holdinvoice" value={result.invoice} />
-          <CopyButton text="{result.invoice}" />
+          <CopyButton text="{result.invoice}" copy={(text) => copy(text)}/>
         </div>
         <QrCode value={result.invoice} />
       {/if}
