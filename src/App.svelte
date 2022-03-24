@@ -1,4 +1,5 @@
 <script>
+  import "carbon-components-svelte/css/g80.css";
   // Import the router component
   // Normally, this would be: `import Router from 'svelte-spa-router'`
   import Router from 'svelte-spa-router'

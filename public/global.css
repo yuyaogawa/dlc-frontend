@@ -61,3 +61,12 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
+
+/* FIXEME */
+.bx--side-nav~.bx--content {
+    margin-left: 0rem !important;
+}
+
+.bx--header~.bx--content {
+    margin-left: 0rem !important;
+}
