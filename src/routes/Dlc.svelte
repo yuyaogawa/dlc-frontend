@@ -6,7 +6,7 @@ on:loaded="{onLoaded}" />
            CopyButton, TextInput,
            ContentSwitcher, Switch, InlineNotification } from "carbon-components-svelte";
 
-  let selectedIndex = 1;
+  let selectedIndex = 0;
 
   import LibLoader from '../components/LibLoader.svelte'
   import Countdown from 'svelte-countdown'
@@ -32,7 +32,7 @@ on:loaded="{onLoaded}" />
     }
     console.log(values)
 
-    if(selectedIndex == 1){
+    if(selectedIndex == 0){
       values.outcomes = "No"
     } else {
       values.outcomes = "Yes"
