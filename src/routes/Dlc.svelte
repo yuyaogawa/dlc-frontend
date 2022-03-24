@@ -263,7 +263,7 @@ on:loaded="{onLoaded}" />
         <p>Pay to this holdinvoice</p>
         <div style="display: flex;">
           <TextInput disabled name="holdinvoice" id="holdinvoice" value={result.invoice} />
-          <CopyButton text={result.invoice} />
+          <CopyButton text="{result.invoice}" />
         </div>
         <QrCode value={result.invoice} />
       {/if}
