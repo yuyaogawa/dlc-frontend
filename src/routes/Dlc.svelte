@@ -1,5 +1,4 @@
-<!--LibLoader url="https://s3.tradingview.com/tv.js"
-on:loaded="{onLoaded}" /-->
+<LibLoader url="https://s3.tradingview.com/tv.js" on:loaded="{onLoaded}" />
 <script>
   import {
     Grid,
@@ -13,8 +12,11 @@ on:loaded="{onLoaded}" /-->
     TextInput,
     ContentSwitcher,
     Switch,
-    InlineNotification,
+    InlineLoading
   } from 'carbon-components-svelte'
+  import ArrowUpRight16 from "carbon-icons-svelte/lib/ArrowUpRight16";
+  import ArrowDownRight16 from "carbon-icons-svelte/lib/ArrowDownRight16";
+  import Renew16 from "carbon-icons-svelte/lib/Renew16";
 
   let selectedIndex = 0
 
@@ -142,9 +144,9 @@ on:loaded="{onLoaded}" /-->
   }
   function onLoaded() {
     new TradingView.widget({
-      //"autosize": true,
-      width: 980,
-      height: 610,
+      "autosize": true,
+      //width: 980,
+      //height: 400,
       symbol: 'BITSTAMP:BTCUSD',
       interval: '1',
       timezone: 'Etc/UTC',
@@ -309,29 +311,31 @@ on:loaded="{onLoaded}" /-->
       </Tabs>
     </ModalBody>
   </ComposedModal>
-  <!--div class="side-left">
-  <div class="tradingview-widget-container">
-    <div id="tradingview_5723e"></div>
-    <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BTCUSD/?exchange=BITSTAMP" rel="noopener" target="_blank"><span class="blue-text">BTCUSD Chart</span></a> by TradingView</div>
+  <div class="side-left">
+    <div style="margin-bottom: 5px;">
+      <h1>Binary Option</h1>
+      <p>This is Binary Option style DLC serivce where you bet on USD/BTC price.</p>
+    </div>
+    <!-- TradingView Widget BEGIN -->
+    <div class="tradingview-widget-container">
+      <div id="tradingview_5723e" style="height: 400px !important;"></div>
+      <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BTCUSD/?exchange=BITSTAMP" rel="noopener" target="_blank"><span class="blue-text">BTCUSD Chart</span></a> by TradingView</div>
+    </div>
+    <!-- TradingView Widget END -->
   </div>
-</div-->
   <div class="side-right">
-    <h1>Binary Option</h1>
-    <p>
-      This is Binary Option style DLC serivce where you bet on BTC/USD price.
-    </p>
-    <button on:click={handleClick}> reload </button>
     <div class="trade-box">
-      <Tile light
-        >Trade
+      <Tile light >
+        <div class="flex">
+          <div style="margin:auto;"></div>
+          <div style="margin:auto;">Trade</div>
+          <div style="margin-left:auto;"><Button iconDescription="Reload" size="small" kind="secondary" icon={Renew16} on:click={handleClick} />
+          </div>
+        </div>
         {#await promise}
           <p>Loading...</p>
         {:then event}
           <form on:submit|preventDefault={onSubmit}>
-            <!--select name="outcomes" id="outcomes" hidden>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-      </select-->
             <input
               type="text"
               name="eventName"
@@ -360,7 +364,8 @@ on:loaded="{onLoaded}" /-->
               type="text"
               name="invoice"
               id="invoice"
-              placeholder="Paste your invoice"
+              size="30"
+              placeholder="Paste invoice with 1000 sats"
               required
             />
             <Grid condensed>
@@ -412,20 +417,15 @@ on:loaded="{onLoaded}" /-->
 
             <div class="box">
               <ContentSwitcher bind:selectedIndex>
-                <Switch text="HIGH" />
-                <Switch text="LOW" />
+                  <Switch><ArrowUpRight16 style="margin-right: 0.5rem;" />HIGH</Switch>
+                  <Switch><ArrowDownRight16 style="margin-right: 0.5rem;" />LOW</Switch>
               </ContentSwitcher>
               <!--div>Selected index: {selectedIndex}</div-->
             </div>
 
             <div class="box">
               {#if loading}
-                <input
-                  type="submit"
-                  name="submit"
-                  id="submit"
-                  value="Submitting..."
-                />
+                <div style="margin: 0 5em;"><InlineLoading status="active" description="Submitting..." /></div>
               {:else}
                 <input type="submit" name="submit" id="submit" value="Submit" />
               {/if}
@@ -558,8 +558,7 @@ on:loaded="{onLoaded}" /-->
       <!-- svelte-ignore a11y-invalid-attribute -->
       <p>
         <a href="javascript:void(0);" on:click={() => (open = true)}
-          >Check the status</a
-        >
+          >Check the status</a>
       </p>
     </div>
   </div>
@@ -579,9 +578,13 @@ on:loaded="{onLoaded}" /-->
     min-width: 315px;
     max-width: calc(60% - 64px);
     margin: 0 12px;
+    margin-top: 3em;
   }
   .side-left {
     width: 70%;
+    min-width: 315px;
+    max-width: calc(60% - 64px);
+    margin: 0 12px;
   }
 
   main {
