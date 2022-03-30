@@ -574,17 +574,16 @@
     flex-wrap: wrap;
   }
   .side-right {
-    width: 28%;
     min-width: 315px;
     max-width: calc(60% - 64px);
-    margin: 0 12px;
-    margin-top: 3em;
+    margin: auto;
+    margin-top: 4.5em;
   }
   .side-left {
     width: 70%;
     min-width: 315px;
     max-width: calc(60% - 64px);
-    margin: 0 12px;
+    margin: auto
   }
 
   main {
