@@ -456,7 +456,7 @@
           {/if}
           {#if result !== null && result.status !== 'error'}
             {#if visible}
-              <p>Pay to this holdinvoice</p>
+              <div class="bounce2"><p>Pay to this holdinvoice</p></div>
               <div style="display: flex;">
                 <TextInput
                   disabled
@@ -639,5 +639,13 @@
 
   .box {
     margin: 8px;
+  }
+  .bounce2 {
+  animation: bounce2 2s ease infinite;
+  }
+  @keyframes bounce2 {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-15px);}
+    60% {transform: translateY(-5px);}
   }
 </style>
