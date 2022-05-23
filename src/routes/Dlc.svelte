@@ -456,7 +456,7 @@
           {/if}
           {#if result !== null && result.status !== 'error'}
             {#if visible}
-              <div class="bounce2"><p>Pay to this holdinvoice</p></div>
+              <div class="bounce2"><p>Pay this holdinvoice</p></div>
               <div style="display: flex;">
                 <TextInput
                   disabled
