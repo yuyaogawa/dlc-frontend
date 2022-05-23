@@ -314,7 +314,7 @@
   <div class="side-left">
     <div style="margin-bottom: 5px;">
       <h1>Binary Option</h1>
-      <p>This is Binary Option style DLC serivce where you bet on USD/BTC price.</p>
+      <p>This is a Binary Option style DLC service where you can bet on USD/BTC price.</p>
     </div>
     <!-- TradingView Widget BEGIN -->
     <div class="tradingview-widget-container">
