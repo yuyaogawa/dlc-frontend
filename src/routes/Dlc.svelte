@@ -1,4 +1,4 @@
-<LibLoader url="https://s3.tradingview.com/tv.js" on:loaded="{onLoaded}" />
+<!--LibLoader url="https://s3.tradingview.com/tv.js" on:loaded="{onLoaded}" /-->
 <script>
   import {
     Grid,
@@ -365,7 +365,7 @@
               name="invoice"
               id="invoice"
               size="30"
-              placeholder="Paste invoice with 1000 sats"
+              placeholder="Paste invoice with premium amount"
               required
             />
             <Grid condensed>
@@ -547,11 +547,11 @@
           <p style="color: red">{error.message}</p>
         {/await}
         <div class="info">
-          <p>Premium: <span class="price">1000 sats</span></p>
-          <p>Option price: <span class="price">2020 sats</span></p>
+          <p>Premium: <span class="price">100 - 100,000 sats</span></p>
+          <p>Payout: <span class="price">Premium * 2.10 sats</span></p>
           <p>
-            Trading (meaning making a payment to the holdinvoice) is only
-            accepted 1 minute before the maturation time.
+            You recieve premium as soon as you sell an option (meaning making a payment to the holdinvoice).
+            Trading is only accepted 1 minute before the maturation time. 
           </p>
         </div>
       </Tile>
