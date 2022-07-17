@@ -1,4 +1,4 @@
-<!--LibLoader url="https://s3.tradingview.com/tv.js" on:loaded="{onLoaded}" /-->
+<LibLoader url="https://s3.tradingview.com/tv.js" on:loaded="{onLoaded}" />
 <script>
   import {
     Grid,
