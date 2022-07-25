@@ -489,7 +489,7 @@
                   </tr>
                   <tr>
                     <td>Ex (x encrypted by sG)</td>
-                    <td>{result.Ex}</td>
+                    <td>{result.encX}</td>
                   </tr>
                   <tr>
                     <td>sha256(x)</td>
