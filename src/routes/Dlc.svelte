@@ -258,7 +258,7 @@
                   <tr>
                     <th>result</th>
                     <th>position</th>
-                    <th>payout</th>
+                    <th>premium</th>
                     <th>eventName</th>
                   </tr>
                   {#each listOpenPosition as result2}
@@ -286,7 +286,7 @@
                   <tr>
                     <th>result</th>
                     <th>position</th>
-                    <th>payout</th>
+                    <th>premium</th>
                     <th>eventName</th>
                   </tr>
                   {#each listClosedPosition as result2}
