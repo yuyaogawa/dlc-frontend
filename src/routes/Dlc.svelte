@@ -398,7 +398,7 @@
                 name="invoice"
                 id="invoice"
                 value={invoice}
-                size="25"
+                size="22"
                 placeholder="invoice with premium amount"
                 required
               />
