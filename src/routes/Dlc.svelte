@@ -17,6 +17,7 @@
   import ArrowUpRight16 from "carbon-icons-svelte/lib/ArrowUpRight16";
   import ArrowDownRight16 from "carbon-icons-svelte/lib/ArrowDownRight16";
   import Renew16 from "carbon-icons-svelte/lib/Renew16";
+  import Wallet32 from "carbon-icons-svelte/lib/Wallet32";
 
   let selectedIndex = 0
 
@@ -29,11 +30,27 @@
   const BASE_URL_ORACLE = URL_ORACLE
   let result
   let event
+  let invoice = null
   let loading = false
   let visible = false
   let position = false
   const pubkey = ORACLE_PUBKEY
-
+  const appUrlScheme = 'lightning://'
+  import { requestProvider } from 'webln/dist/webln.min.js';
+  async function weblncall() {
+    try {
+      const webln = await requestProvider();
+      // Now you can call all of the webln.* methods
+      const res = await webln.makeInvoice();
+      invoice = res.paymentRequest
+      console.log(invoice)
+    }
+    catch(err) {
+      // Tell the user what went wrong
+      alert(err.message);
+      window.open(appUrlScheme, "_self");
+    }
+  }
   async function onSubmit(e) {
     loading = true
     const formData = new FormData(e.target)
@@ -360,14 +377,18 @@
               readonly
               hidden
             />
-            <input
-              type="text"
-              name="invoice"
-              id="invoice"
-              size="30"
-              placeholder="Paste invoice with premium amount"
-              required
-            />
+            <div class="flex invoice">
+              <input
+                type="text"
+                name="invoice"
+                id="invoice"
+                value={invoice}
+                size="25"
+                placeholder="Paste invoice with premium amount"
+                required
+              />
+              <Button size="small" kind="secondary" iconDescription="Open wallet" icon={Wallet32} on:click={weblncall} />
+            </div>
             <Grid condensed>
               <Row>
                 <Column style="outline: 1px solid var(--cds-interactive-02)"
@@ -466,7 +487,9 @@
                 />
                 <CopyButton text={result.invoice} copy={(text) => copy(text)} />
               </div>
-              <QrCode value={result.invoice} />
+              <a href="lightning://{result.invoice}">
+                <QrCode value={result.invoice} />
+              </a>
             {/if}
             <Accordion>
               <AccordionItem title="Contract info">
@@ -630,7 +653,14 @@
   form {
     padding: 8px;
   }
-
+  .invoice {
+    margin-bottom: 0.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .invoice>input {
+    margin: 0;
+  }
   .trade-box {
     max-width: 310px;
     margin-left: auto;

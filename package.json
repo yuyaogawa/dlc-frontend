@@ -33,6 +33,7 @@
     "sirv-cli": "^2.0.0",
     "svelte-countdown": "^1.0.0",
     "svelte-qrcode": "^1.0.0",
-    "svelte-spa-router": "^3.2.0"
+    "svelte-spa-router": "^3.2.0",
+    "webln": "^0.3.0"
   }
 }
