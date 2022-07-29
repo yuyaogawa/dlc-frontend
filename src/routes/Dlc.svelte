@@ -223,11 +223,12 @@
   }
   // This is called from reload button
   async function getSavedPositions() {
+    const reg = new RegExp('^[0-9]+$')
     position2 = false
     listOpenPosition = []
     listClosedPosition = []
     for (const key in localStorage) {
-      if (localStorage.hasOwnProperty(key)) {
+      if (localStorage.hasOwnProperty(key) && reg.test(key)) {
         let item = JSON.parse(
           JSON.parse(JSON.stringify(localStorage.getItem(key)))
         )
@@ -255,6 +256,9 @@
       }
     }
     position2 = true
+  }
+  async function clearLocalStorage() {
+    localStorage.clear();
   }
   function saveOpenPosition(id, hashX, closed, status, paid, eventName) {
     let obj = {
@@ -341,6 +345,9 @@
           </TabContent>
         </svelte:fragment>
       </Tabs>
+      <div align="right">
+        <button on:click={clearLocalStorage}> clear </button>
+      </div>
     </ModalBody>
   </ComposedModal>
   <div class="side-left">
