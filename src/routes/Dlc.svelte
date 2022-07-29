@@ -118,6 +118,7 @@
     return result
   }
   async function getEvent() {
+    invoice = null
     result = null
     visible = false
     position = false
