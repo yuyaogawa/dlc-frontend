@@ -35,19 +35,34 @@
   let visible = false
   let position = false
   const pubkey = ORACLE_PUBKEY
-  const appUrlScheme = 'lightning://'
+  const appUrlScheme = 'lightning:'
   import { requestProvider } from 'webln/dist/webln.min.js';
+  let webln = null;
+
   async function weblncall() {
     try {
-      const webln = await requestProvider();
+      webln = await requestProvider();
       // Now you can call all of the webln.* methods
-      const res = await webln.makeInvoice();
-      invoice = res.paymentRequest
-      console.log(invoice)
     }
     catch(err) {
       // Tell the user what went wrong
-      alert(err.message);
+      //alert(err.message);
+      webln = null;
+    }
+  }
+  async function makeInvoice() {
+    await weblncall();
+    if(webln != null){
+      try {
+      const res = await webln.makeInvoice();
+      invoice = res.paymentRequest
+      console.log(invoice)
+      }
+      catch(err) {
+        // Tell the user what went wrong
+        //alert(err.message);
+      }
+    }else{
       window.open(appUrlScheme, "_self");
     }
   }
@@ -384,10 +399,10 @@
                 id="invoice"
                 value={invoice}
                 size="25"
-                placeholder="Paste invoice with premium amount"
+                placeholder="invoice with premium amount"
                 required
               />
-              <Button size="small" kind="secondary" iconDescription="Open wallet" icon={Wallet32} on:click={weblncall} />
+              <Button size="small" kind="secondary" iconDescription="Open wallet" icon={Wallet32} on:click={makeInvoice} />
             </div>
             <Grid condensed>
               <Row>
@@ -487,7 +502,7 @@
                 />
                 <CopyButton text={result.invoice} copy={(text) => copy(text)} />
               </div>
-              <a href="lightning://{result.invoice}">
+              <a href="lightning:{result.invoice}">
                 <QrCode value={result.invoice} />
               </a>
             {/if}
