@@ -111,6 +111,11 @@
         0,
         result.status,
         result.paid,
+        result.premium,
+        result.payout,
+        result.m,
+        result.strikePrice,
+        result.closedPrice,
         result.eventName
       )
     }
@@ -139,8 +144,11 @@
     }
   }
   let promise = getEvent()
-  function handleClick() {
-    promise = getEvent()
+  async function handleClick() {
+    promise = getEvent();
+  }
+  async function autoReload() {
+      promise = getEvent();
   }
   function subscribePayment(payment_hash) {
     const API = BASE_URL_DLC + '/stream?payment_hash=' + payment_hash
@@ -195,12 +203,14 @@
 
   // Position Modal UI
   import {
+    Modal,
     ComposedModal,
     ModalHeader,
     ModalBody,
   } from 'carbon-components-svelte'
   import { Tabs, Tab, TabContent } from 'carbon-components-svelte'
   let open = false
+  let openModal = false
   // Position Modal Logic
   let result2
   let position2 = false
@@ -243,31 +253,66 @@
               1,
               res.status,
               res.paid,
+              Number(res.premium),
+              Number(res.payout),
+              res.m,
+              res.strikePrice,
+              res.closedPrice,
               res.eventName
             )
           }
         } else if (item.closed == 1) {
           const obj = {
+            id: item.id,
             status: item.status,
             paid: item.paid,
+            premium: item.premium,
+            payout: item.payout,
+            m: item.m,
+            strikePrice: item.strikePrice,
+            closedPrice: item.closedPrice,
             eventName: item.eventName,
           }
           listClosedPosition.push(obj)
         }
       }
     }
+    listClosedPosition.sort(function(a, b) {
+      var keyA = Number(a.id),
+        keyB = Number(b.id);
+      // Compare the 2 dates
+      if (keyA < keyB) return -1;
+      if (keyA > keyB) return 1;
+      return 0;
+    });
+    listOpenPosition.sort(function(a, b) {
+      var keyA = Number(a.id),
+        keyB = Number(b.id);
+      // Compare the 2 dates
+      if (keyA < keyB) return -1;
+      if (keyA > keyB) return 1;
+      return 0;
+    });
+    console.log(listOpenPosition)
+    console.log(listClosedPosition)
     position2 = true
   }
   async function clearLocalStorage() {
     localStorage.clear();
+    openModal = false;
   }
-  function saveOpenPosition(id, hashX, closed, status, paid, eventName) {
+  function saveOpenPosition(id, hashX, closed, status, paid, premium, payout, m, strikePrice, closedPrice, eventName) {
     let obj = {
       id: id,
       hashX: hashX,
       closed: closed,
       status: status,
       paid: paid,
+      premium: premium,
+      payout: payout,
+      m: m,
+      strikePrice: strikePrice,
+      closedPrice: closedPrice,
       eventName: eventName,
     }
     localStorage.setItem(id, JSON.stringify(obj))
@@ -295,11 +340,15 @@
                   <tr>
                     <th>result</th>
                     <th>position</th>
-                    <th>premium</th>
+                    <th>status (sats)</th>
+                    <th>premium (sats)</th>
+                    <th>strike price</th>
+                    <th>closed price</th>
                     <th>eventName</th>
                   </tr>
                   {#each listOpenPosition as result2}
                     <tr>
+                      <!-- Result -->
                       {#if result2.status == 'CANCELED' && result2.paid}
                         <td>You win</td>
                       {:else if result2.status == 'SETTLED' && result2.paid}
@@ -307,8 +356,21 @@
                       {:else}
                         <td>-</td>
                       {/if}
-                      <td>{result2.status}</td>
-                      <td>{result2.paid}</td>
+
+                      <!-- Position -->
+                      {#if result2.m == 'No'}
+                        <td>HIGH</td>
+                      {:else if result2.m == 'Yes'}
+                        <td>LOW</td>
+                      {:else}
+                        <td>-</td>
+                      {/if}
+
+                      <!-- Status -->
+                      <td>{result2.status} ({result2.payout})</td>
+                      <td>{result2.paid} ({result2.premium})</td>
+                      <td>{result2.strikePrice}</td>
+                      <td>{result2.closedPrice}</td>
                       <td>{result2.eventName}</td>
                     </tr>
                   {/each}
@@ -323,11 +385,15 @@
                   <tr>
                     <th>result</th>
                     <th>position</th>
-                    <th>premium</th>
+                    <th>status (sats)</th>
+                    <th>premium (sats)</th>
+                    <th>strike price</th>
+                    <th>closed price</th>
                     <th>eventName</th>
                   </tr>
                   {#each listClosedPosition as result2}
                     <tr>
+                      <!-- Result -->
                       {#if result2.status == 'CANCELED' && result2.paid}
                         <td>You win</td>
                       {:else if result2.status == 'SETTLED' && result2.paid}
@@ -335,8 +401,21 @@
                       {:else}
                         <td>-</td>
                       {/if}
-                      <td>{result2.status}</td>
-                      <td>{result2.paid}</td>
+
+                      <!-- Position -->
+                      {#if result2.m == 'No'}
+                        <td>HIGH</td>
+                      {:else if result2.m == 'Yes'}
+                        <td>LOW</td>
+                      {:else}
+                        <td>-</td>
+                      {/if}
+
+                      <!-- Status -->
+                      <td>{result2.status} ({result2.payout})</td>
+                      <td>{result2.paid} ({result2.premium})</td>
+                      <td>{result2.strikePrice}</td>
+                      <td>{result2.closedPrice}</td>
                       <td>{result2.eventName}</td>
                     </tr>
                   {/each}
@@ -347,10 +426,23 @@
         </svelte:fragment>
       </Tabs>
       <div align="right">
-        <button on:click={clearLocalStorage}> clear </button>
+        <button on:click={() => (openModal = true)}> clear </button>
       </div>
     </ModalBody>
   </ComposedModal>
+  <Modal
+    size="xs"
+    bind:open={openModal}
+    modalHeading="Clear local data"
+    primaryButtonText="Confirm"
+    secondaryButtonText="Cancel"
+    on:click:button--primary={clearLocalStorage}
+    on:click:button--secondary={() => (openModal = false)}
+    on:open
+    on:close
+  >
+    <p>Clear your local storage data.</p>
+  </Modal>
   <div class="side-left">
     <div style="margin-bottom: 5px;">
       <h1>Binary Option</h1>
@@ -369,7 +461,7 @@
         <div class="flex">
           <div style="margin:auto;"></div>
           <div style="margin:auto;">Trade</div>
-          <div style="margin-left:auto;"><Button iconDescription="Reload" size="small" kind="secondary" icon={Renew16} on:click={handleClick} />
+          <div style="margin-left:auto;"><Button size="small" kind="secondary" icon={Renew16} on:click={handleClick} />
           </div>
         </div>
         {#await promise}
@@ -410,7 +502,7 @@
                 placeholder="invoice with premium amount"
                 required
               />
-              <Button size="small" kind="secondary" iconDescription="Open wallet" icon={Wallet32} on:click={makeInvoice} />
+              <Button size="small" kind="secondary" icon={Wallet32} on:click={makeInvoice} />
             </div>
             <Grid condensed>
               <Row>
@@ -452,6 +544,7 @@
                         </div>
                       {:else}
                         <div>Expired</div>
+                       {autoReload()}
                       {/if}
                     </div>
                   </Countdown>
