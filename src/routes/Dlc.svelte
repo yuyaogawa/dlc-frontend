@@ -461,7 +461,7 @@
         <div class="flex">
           <div style="margin:auto;"></div>
           <div style="margin:auto;">Trade</div>
-          <div style="margin-left:auto;"><Button size="small" kind="secondary" icon={Renew16} on:click={handleClick} />
+          <div style="margin-left:auto;"><Button size="small" kind="secondary" iconDescription="Reload" icon={Renew16} on:click={handleClick} />
           </div>
         </div>
         {#await promise}
@@ -502,7 +502,7 @@
                 placeholder="invoice with premium amount"
                 required
               />
-              <Button size="small" kind="secondary" icon={Wallet32} on:click={makeInvoice} />
+              <Button size="small" kind="secondary" iconDescription="Open wallet" icon={Wallet32} on:click={makeInvoice} />
             </div>
             <Grid condensed>
               <Row>
