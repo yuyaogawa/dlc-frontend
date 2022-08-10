@@ -17,6 +17,7 @@
   import ArrowUpRight16 from "carbon-icons-svelte/lib/ArrowUpRight16";
   import ArrowDownRight16 from "carbon-icons-svelte/lib/ArrowDownRight16";
   import Renew16 from "carbon-icons-svelte/lib/Renew16";
+  import Wallet32 from "carbon-icons-svelte/lib/Wallet32";
 
   let selectedIndex = 0
 
@@ -29,11 +30,42 @@
   const BASE_URL_ORACLE = URL_ORACLE
   let result
   let event
+  let invoice = null
   let loading = false
   let visible = false
   let position = false
   const pubkey = ORACLE_PUBKEY
+  const appUrlScheme = 'lightning:'
+  import { requestProvider } from 'webln/dist/webln.min.js';
+  let webln = null;
 
+  async function weblncall() {
+    try {
+      webln = await requestProvider();
+      // Now you can call all of the webln.* methods
+    }
+    catch(err) {
+      // Tell the user what went wrong
+      //alert(err.message);
+      webln = null;
+    }
+  }
+  async function makeInvoice() {
+    await weblncall();
+    if(webln != null){
+      try {
+      const res = await webln.makeInvoice();
+      invoice = res.paymentRequest
+      console.log(invoice)
+      }
+      catch(err) {
+        // Tell the user what went wrong
+        //alert(err.message);
+      }
+    }else{
+      window.open(appUrlScheme, "_self");
+    }
+  }
   async function onSubmit(e) {
     loading = true
     const formData = new FormData(e.target)
@@ -79,6 +111,11 @@
         0,
         result.status,
         result.paid,
+        result.premium,
+        result.payout,
+        result.m,
+        result.strikePrice,
+        result.closedPrice,
         result.eventName
       )
     }
@@ -86,6 +123,7 @@
     return result
   }
   async function getEvent() {
+    invoice = null
     result = null
     visible = false
     position = false
@@ -106,8 +144,11 @@
     }
   }
   let promise = getEvent()
-  function handleClick() {
-    promise = getEvent()
+  async function handleClick() {
+    promise = getEvent();
+  }
+  async function autoReload() {
+      promise = getEvent();
   }
   function subscribePayment(payment_hash) {
     const API = BASE_URL_DLC + '/stream?payment_hash=' + payment_hash
@@ -162,12 +203,14 @@
 
   // Position Modal UI
   import {
+    Modal,
     ComposedModal,
     ModalHeader,
     ModalBody,
   } from 'carbon-components-svelte'
   import { Tabs, Tab, TabContent } from 'carbon-components-svelte'
   let open = false
+  let openModal = false
   // Position Modal Logic
   let result2
   let position2 = false
@@ -191,11 +234,12 @@
   }
   // This is called from reload button
   async function getSavedPositions() {
+    const reg = new RegExp('^[0-9]+$')
     position2 = false
     listOpenPosition = []
     listClosedPosition = []
     for (const key in localStorage) {
-      if (localStorage.hasOwnProperty(key)) {
+      if (localStorage.hasOwnProperty(key) && reg.test(key)) {
         let item = JSON.parse(
           JSON.parse(JSON.stringify(localStorage.getItem(key)))
         )
@@ -209,28 +253,66 @@
               1,
               res.status,
               res.paid,
+              Number(res.premium),
+              Number(res.payout),
+              res.m,
+              res.strikePrice,
+              res.closedPrice,
               res.eventName
             )
           }
         } else if (item.closed == 1) {
           const obj = {
+            id: item.id,
             status: item.status,
             paid: item.paid,
+            premium: item.premium,
+            payout: item.payout,
+            m: item.m,
+            strikePrice: item.strikePrice,
+            closedPrice: item.closedPrice,
             eventName: item.eventName,
           }
           listClosedPosition.push(obj)
         }
       }
     }
+    listClosedPosition.sort(function(a, b) {
+      var keyA = Number(a.id),
+        keyB = Number(b.id);
+      // Compare the 2 dates
+      if (keyA < keyB) return -1;
+      if (keyA > keyB) return 1;
+      return 0;
+    });
+    listOpenPosition.sort(function(a, b) {
+      var keyA = Number(a.id),
+        keyB = Number(b.id);
+      // Compare the 2 dates
+      if (keyA < keyB) return -1;
+      if (keyA > keyB) return 1;
+      return 0;
+    });
+    console.log(listOpenPosition)
+    console.log(listClosedPosition)
     position2 = true
   }
-  function saveOpenPosition(id, hashX, closed, status, paid, eventName) {
+  async function clearLocalStorage() {
+    localStorage.clear();
+    openModal = false;
+  }
+  function saveOpenPosition(id, hashX, closed, status, paid, premium, payout, m, strikePrice, closedPrice, eventName) {
     let obj = {
       id: id,
       hashX: hashX,
       closed: closed,
       status: status,
       paid: paid,
+      premium: premium,
+      payout: payout,
+      m: m,
+      strikePrice: strikePrice,
+      closedPrice: closedPrice,
       eventName: eventName,
     }
     localStorage.setItem(id, JSON.stringify(obj))
@@ -258,11 +340,15 @@
                   <tr>
                     <th>result</th>
                     <th>position</th>
-                    <th>payout</th>
+                    <th>status (sats)</th>
+                    <th>premium (sats)</th>
+                    <th>strike price</th>
+                    <th>closed price</th>
                     <th>eventName</th>
                   </tr>
                   {#each listOpenPosition as result2}
                     <tr>
+                      <!-- Result -->
                       {#if result2.status == 'CANCELED' && result2.paid}
                         <td>You win</td>
                       {:else if result2.status == 'SETTLED' && result2.paid}
@@ -270,8 +356,21 @@
                       {:else}
                         <td>-</td>
                       {/if}
-                      <td>{result2.status}</td>
-                      <td>{result2.paid}</td>
+
+                      <!-- Position -->
+                      {#if result2.m == 'No'}
+                        <td>HIGH</td>
+                      {:else if result2.m == 'Yes'}
+                        <td>LOW</td>
+                      {:else}
+                        <td>-</td>
+                      {/if}
+
+                      <!-- Status -->
+                      <td>{result2.status} ({result2.payout})</td>
+                      <td>{result2.paid} ({result2.premium})</td>
+                      <td>{result2.strikePrice}</td>
+                      <td>{result2.closedPrice}</td>
                       <td>{result2.eventName}</td>
                     </tr>
                   {/each}
@@ -286,11 +385,15 @@
                   <tr>
                     <th>result</th>
                     <th>position</th>
-                    <th>payout</th>
+                    <th>status (sats)</th>
+                    <th>premium (sats)</th>
+                    <th>strike price</th>
+                    <th>closed price</th>
                     <th>eventName</th>
                   </tr>
                   {#each listClosedPosition as result2}
                     <tr>
+                      <!-- Result -->
                       {#if result2.status == 'CANCELED' && result2.paid}
                         <td>You win</td>
                       {:else if result2.status == 'SETTLED' && result2.paid}
@@ -298,8 +401,21 @@
                       {:else}
                         <td>-</td>
                       {/if}
-                      <td>{result2.status}</td>
-                      <td>{result2.paid}</td>
+
+                      <!-- Position -->
+                      {#if result2.m == 'No'}
+                        <td>HIGH</td>
+                      {:else if result2.m == 'Yes'}
+                        <td>LOW</td>
+                      {:else}
+                        <td>-</td>
+                      {/if}
+
+                      <!-- Status -->
+                      <td>{result2.status} ({result2.payout})</td>
+                      <td>{result2.paid} ({result2.premium})</td>
+                      <td>{result2.strikePrice}</td>
+                      <td>{result2.closedPrice}</td>
                       <td>{result2.eventName}</td>
                     </tr>
                   {/each}
@@ -309,12 +425,28 @@
           </TabContent>
         </svelte:fragment>
       </Tabs>
+      <div align="right">
+        <button on:click={() => (openModal = true)}> clear </button>
+      </div>
     </ModalBody>
   </ComposedModal>
+  <Modal
+    size="xs"
+    bind:open={openModal}
+    modalHeading="Clear local data"
+    primaryButtonText="Confirm"
+    secondaryButtonText="Cancel"
+    on:click:button--primary={clearLocalStorage}
+    on:click:button--secondary={() => (openModal = false)}
+    on:open
+    on:close
+  >
+    <p>Clear your local storage data.</p>
+  </Modal>
   <div class="side-left">
     <div style="margin-bottom: 5px;">
       <h1>Binary Option</h1>
-      <p>This is Binary Option style DLC serivce where you bet on USD/BTC price.</p>
+      <p>This is a Binary Option style DLC service where you can bet on USD/BTC price.</p>
     </div>
     <!-- TradingView Widget BEGIN -->
     <div class="tradingview-widget-container">
@@ -329,7 +461,7 @@
         <div class="flex">
           <div style="margin:auto;"></div>
           <div style="margin:auto;">Trade</div>
-          <div style="margin-left:auto;"><Button iconDescription="Reload" size="small" kind="secondary" icon={Renew16} on:click={handleClick} />
+          <div style="margin-left:auto;"><Button size="small" kind="secondary" iconDescription="Reload" icon={Renew16} on:click={handleClick} />
           </div>
         </div>
         {#await promise}
@@ -360,14 +492,18 @@
               readonly
               hidden
             />
-            <input
-              type="text"
-              name="invoice"
-              id="invoice"
-              size="30"
-              placeholder="Paste invoice with 1000 sats"
-              required
-            />
+            <div class="flex invoice">
+              <input
+                type="text"
+                name="invoice"
+                id="invoice"
+                value={invoice}
+                size="22"
+                placeholder="invoice with premium amount"
+                required
+              />
+              <Button size="small" kind="secondary" iconDescription="Open wallet" icon={Wallet32} on:click={makeInvoice} />
+            </div>
             <Grid condensed>
               <Row>
                 <Column style="outline: 1px solid var(--cds-interactive-02)"
@@ -408,6 +544,7 @@
                         </div>
                       {:else}
                         <div>Expired</div>
+                       {autoReload()}
                       {/if}
                     </div>
                   </Countdown>
@@ -456,7 +593,7 @@
           {/if}
           {#if result !== null && result.status !== 'error'}
             {#if visible}
-              <p>Pay to this holdinvoice</p>
+              <div class="bounce2"><p>Pay this holdinvoice</p></div>
               <div style="display: flex;">
                 <TextInput
                   disabled
@@ -466,7 +603,9 @@
                 />
                 <CopyButton text={result.invoice} copy={(text) => copy(text)} />
               </div>
-              <QrCode value={result.invoice} />
+              <a href="lightning:{result.invoice}">
+                <QrCode value={result.invoice} />
+              </a>
             {/if}
             <Accordion>
               <AccordionItem title="Contract info">
@@ -489,7 +628,7 @@
                   </tr>
                   <tr>
                     <td>Ex (x encrypted by sG)</td>
-                    <td>{result.Ex}</td>
+                    <td>{result.encX}</td>
                   </tr>
                   <tr>
                     <td>sha256(x)</td>
@@ -547,11 +686,11 @@
           <p style="color: red">{error.message}</p>
         {/await}
         <div class="info">
-          <p>Premium: <span class="price">1000 sats</span></p>
-          <p>Option price: <span class="price">2020 sats</span></p>
+          <p>Premium: <span class="price">100 - 100,000 sats</span></p>
+          <p>Payout: <span class="price">Premium * 2.10 sats</span></p>
           <p>
-            Trading (meaning making a payment to the holdinvoice) is only
-            accepted 1 minute before the maturation time.
+            You recieve premium as soon as you sell an option (meaning making a payment to the holdinvoice).
+            Trading is only accepted 1 minute before the maturation time. 
           </p>
         </div>
       </Tile>
@@ -574,17 +713,16 @@
     flex-wrap: wrap;
   }
   .side-right {
-    width: 28%;
     min-width: 315px;
     max-width: calc(60% - 64px);
-    margin: 0 12px;
-    margin-top: 3em;
+    margin: auto;
+    margin-top: 4.5em;
   }
   .side-left {
     width: 70%;
     min-width: 315px;
     max-width: calc(60% - 64px);
-    margin: 0 12px;
+    margin: auto
   }
 
   main {
@@ -631,7 +769,14 @@
   form {
     padding: 8px;
   }
-
+  .invoice {
+    margin-bottom: 0.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .invoice>input {
+    margin: 0;
+  }
   .trade-box {
     max-width: 310px;
     margin-left: auto;
@@ -640,5 +785,13 @@
 
   .box {
     margin: 8px;
+  }
+  .bounce2 {
+  animation: bounce2 2s ease infinite;
+  }
+  @keyframes bounce2 {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-15px);}
+    60% {transform: translateY(-5px);}
   }
 </style>

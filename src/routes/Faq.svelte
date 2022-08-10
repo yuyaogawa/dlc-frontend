@@ -22,7 +22,7 @@
   <hr>
 
   <h3>How does this work?</h3>
-  <p><img src='https://s3-ap-northeast-1.amazonaws.com/spotlight-s3-001/article/20220309_110438_mceu_35637501011646823877750.png' alt='diagram'></p>
+  <p><img src='https://s3-ap-northeast-1.amazonaws.com/spotlight-s3-001/article/20220330_070020_mceu_55763031111648623619570.png' alt='diagram'></p>
 
 </main>
 

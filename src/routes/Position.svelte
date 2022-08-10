@@ -57,7 +57,7 @@
         <tr>
           <th>result</th>
           <th>position</th>
-          <th>payout</th>
+          <th>premium</th>
           <th>eventName</th>
         </tr>
           <tr>
