@@ -13,8 +13,8 @@
   <h3>Overview</h3>
   <p><img src='https://s3-ap-northeast-1.amazonaws.com/spotlight-s3-001/article/20220317_044111_mceu_89623369121647492071491.png' alt='diagram'></p>
   <h3>API</h3>
-  <p><a href="https://dlc.soy:3000/api-documentation/" target="_blank">DLC-LN</a></p>
-  <p><a href="https://dlc.soy:4000/api-documentation/" target="_blank">Oracle Server</a></p>
+  <p><a href="http://dlc.soy:3000/api-documentation/" target="_blank">DLC-LN</a></p>
+  <p><a href="http://dlc.soy:4000/api-documentation/" target="_blank">Oracle Server</a></p>
   <hr>
 
   <h3>Can Maker cheat?</h3>
