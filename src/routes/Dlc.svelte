@@ -232,6 +232,21 @@
       throw new Error(result2.message)
     }
   }
+
+  let result3
+  let promise3 = getVolume()
+  async function getVolume() {
+    const res = await fetch(BASE_URL_DLC + `/stats`)
+    result3 = await res.json()
+    console.log(result3)
+
+    if (res.ok && res.status !== 'error') {
+      return result3
+    } else {
+      throw new Error(result3.message)
+    }
+  }
+
   // This is called from reload button
   async function getSavedPositions() {
     const reg = new RegExp('^[0-9]+$')
@@ -281,16 +296,16 @@
       var keyA = Number(a.id),
         keyB = Number(b.id);
       // Compare the 2 dates
-      if (keyA < keyB) return -1;
-      if (keyA > keyB) return 1;
+      if (keyA < keyB) return 1;
+      if (keyA > keyB) return -1;
       return 0;
     });
     listOpenPosition.sort(function(a, b) {
       var keyA = Number(a.id),
         keyB = Number(b.id);
       // Compare the 2 dates
-      if (keyA < keyB) return -1;
-      if (keyA > keyB) return 1;
+      if (keyA < keyB) return 1;
+      if (keyA > keyB) return -1;
       return 0;
     });
     console.log(listOpenPosition)
@@ -699,6 +714,15 @@
         <a href="javascript:void(0);" on:click={() => (open = true)}
           >Check the status</a>
       </p>
+      <div style="margin: 0.5em;"> Daily Volume
+        {#await promise3}
+          <p>Loading...</p>
+        {:then result3}
+          <p>{result3.dailyVolume / 100000000} BTC</p>
+        {:catch error}
+          <p style="color: red">{error.message}</p>
+        {/await}
+      </div>
     </div>
   </div>
 </main>
