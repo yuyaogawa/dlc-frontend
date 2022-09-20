@@ -296,16 +296,16 @@
       var keyA = Number(a.id),
         keyB = Number(b.id);
       // Compare the 2 dates
-      if (keyA < keyB) return -1;
-      if (keyA > keyB) return 1;
+      if (keyA < keyB) return 1;
+      if (keyA > keyB) return -1;
       return 0;
     });
     listOpenPosition.sort(function(a, b) {
       var keyA = Number(a.id),
         keyB = Number(b.id);
       // Compare the 2 dates
-      if (keyA < keyB) return -1;
-      if (keyA > keyB) return 1;
+      if (keyA < keyB) return 1;
+      if (keyA > keyB) return -1;
       return 0;
     });
     console.log(listOpenPosition)
