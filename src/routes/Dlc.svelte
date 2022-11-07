@@ -55,10 +55,16 @@
   async function makeInvoice() {
     await weblncall();
     if(webln != null){
+      let amount = 0;
+      if (selectedIndex == 0) {
+        amount = put;
+      } else {
+        amount = call;
+      }
       try {
-      const res = await webln.makeInvoice();
-      invoice = res.paymentRequest
-      console.log(invoice)
+        const res = await webln.makeInvoice(amount);
+        invoice = res.paymentRequest
+        console.log(invoice)
       }
       catch(err) {
         // Tell the user what went wrong
