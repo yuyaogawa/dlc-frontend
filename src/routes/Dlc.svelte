@@ -34,6 +34,9 @@
   let loading = false
   let visible = false
   let position = false
+  let currentPrice = 0;
+  let call = 0;
+  let put = 0;
   const pubkey = ORACLE_PUBKEY
   const appUrlScheme = 'lightning:'
   import { requestProvider } from 'webln/dist/webln.min.js';
@@ -53,10 +56,16 @@
   async function makeInvoice() {
     await weblncall();
     if(webln != null){
+      let amount = 0;
+      if (selectedIndex == 0) {
+        amount = put;
+      } else {
+        amount = call;
+      }
       try {
-      const res = await webln.makeInvoice();
-      invoice = res.paymentRequest
-      console.log(invoice)
+        const res = await webln.makeInvoice(amount);
+        invoice = res.paymentRequest
+        console.log(invoice)
       }
       catch(err) {
         // Tell the user what went wrong
@@ -245,6 +254,31 @@
     } else {
       throw new Error(result3.message)
     }
+  }
+
+  subscribeQuotes();
+  function subscribeQuotes() {
+    const source = new EventSource(BASE_URL_DLC + '/quotes');
+    source.addEventListener('open', (e) => {
+      console.log('event source is open');
+    })
+    source.addEventListener('message', (e) => {
+      const json = JSON.parse(e.data);
+      console.log("'message' event received:", json);
+      console.log("'message' :", json.message);
+      if (json.status == 'ok') {
+        currentPrice = json.message.currentPrice;
+        call = json.message.c;
+        put = json.message.p;
+        console.log(json.message);
+      } else {
+        console.log(json.message);
+      }
+    })
+    source.addEventListener('error', (e) => {
+      console.log('event source is close');
+      source.close();
+    })
   }
 
   // This is called from reload button
@@ -522,10 +556,18 @@
             <Grid condensed>
               <Row>
                 <Column style="outline: 1px solid var(--cds-interactive-02)"
+                  >Current Price</Column
+                >
+                <Column style="outline: 1px solid var(--cds-interactive-02)"
+                  >{currentPrice} USD</Column
+                >
+              </Row>
+              <Row>
+                <Column style="outline: 1px solid var(--cds-interactive-02)"
                   >Strike Price</Column
                 >
                 <Column style="outline: 1px solid var(--cds-interactive-02)"
-                  >{event.eventName.match(/\[(.*?)\]/g)} USD</Column
+                  >{(/\[(.*?)\]/g).exec(event.eventName)[1]} USD</Column
                 >
               </Row>
             </Grid>
@@ -568,9 +610,9 @@
             </Grid>
 
             <div class="box">
-              <ContentSwitcher bind:selectedIndex>
-                  <Switch><ArrowUpRight16 style="margin-right: 0.5rem;" />HIGH</Switch>
-                  <Switch><ArrowDownRight16 style="margin-right: 0.5rem;" />LOW</Switch>
+              <ContentSwitcher size="xl" bind:selectedIndex>
+                  <Switch><ArrowUpRight16 style="margin-right: 0.5rem;" />HIGH<br> {put} sats</Switch>
+                  <Switch><ArrowDownRight16 style="margin-right: 0.5rem;" />LOW<br> {call} sats</Switch>
               </ContentSwitcher>
               <!--div>Selected index: {selectedIndex}</div-->
             </div>
@@ -701,8 +743,7 @@
           <p style="color: red">{error.message}</p>
         {/await}
         <div class="info">
-          <p>Premium: <span class="price">100 - 100,000 sats</span></p>
-          <p>Payout: <span class="price">Premium * 2.10 sats</span></p>
+          <p>Payout: <span class="price">10,000 sats</span></p>
           <p>
             You recieve premium as soon as you sell an option (meaning making a payment to the holdinvoice).
             Trading is only accepted 1 minute before the maturation time. 
