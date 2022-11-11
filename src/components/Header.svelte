@@ -21,7 +21,7 @@
 </script>
 
 <Header persistentHamburgerMenu={true} platformName="DLC-LN" bind:isSideNavOpen>
-  <Tag type="cyan"> Testnet </Tag>
+  <Tag type="green"> Mainnet </Tag>
   <svelte:fragment slot="skip-to-content">
     <SkipToContent />
   </svelte:fragment>

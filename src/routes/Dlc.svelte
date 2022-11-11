@@ -34,6 +34,7 @@
   let loading = false
   let visible = false
   let position = false
+  let currentPrice = 0;
   let call = 0;
   let put = 0;
   const pubkey = ORACLE_PUBKEY
@@ -266,6 +267,7 @@
       console.log("'message' event received:", json);
       console.log("'message' :", json.message);
       if (json.status == 'ok') {
+        currentPrice = json.message.currentPrice;
         call = json.message.c;
         put = json.message.p;
         console.log(json.message);
@@ -554,10 +556,18 @@
             <Grid condensed>
               <Row>
                 <Column style="outline: 1px solid var(--cds-interactive-02)"
+                  >Current Price</Column
+                >
+                <Column style="outline: 1px solid var(--cds-interactive-02)"
+                  >{currentPrice} USD</Column
+                >
+              </Row>
+              <Row>
+                <Column style="outline: 1px solid var(--cds-interactive-02)"
                   >Strike Price</Column
                 >
                 <Column style="outline: 1px solid var(--cds-interactive-02)"
-                  >{event.eventName.match(/\[(.*?)\]/g)} USD</Column
+                  >{(/\[(.*?)\]/g).exec(event.eventName)[1]} USD</Column
                 >
               </Row>
             </Grid>
