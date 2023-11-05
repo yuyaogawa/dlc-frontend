@@ -145,11 +145,11 @@
     const res2 = await fetch(BASE_URL_ORACLE + `/events/latest`)
     event = await res2.json()
 
-    if (res.ok) {
+    if (res2.ok) {
       console.log('ok')
       return event
     } else {
-      throw new Error(res)
+      throw new Error(res2)
     }
   }
   let promise = getEvent()
