@@ -136,13 +136,13 @@
     result = null
     visible = false
     position = false
-    const res = await fetch(BASE_URL_ORACLE + `/events`)
+    /* const res = await fetch(BASE_URL_ORACLE + `/events`)
     const events = await res.json()
 
     if (events.status == 'error') {
       throw new Error(events.message)
-    }
-    const res2 = await fetch(BASE_URL_ORACLE + `/events/` + events[0])
+    } */
+    const res2 = await fetch(BASE_URL_ORACLE + `/events/latest`)
     event = await res2.json()
 
     if (res.ok) {
@@ -493,10 +493,10 @@
     <p>Clear your local storage data.</p>
   </Modal>
   <div class="side-left">
-    <div style="margin-bottom: 5px;">
+    <!--div style="margin-bottom: 5px;">
       <h1>Binary Option</h1>
       <p>This is a Binary Option style DLC service where you can bet on USD/BTC price.</p>
-    </div>
+    </div-->
     <!-- TradingView Widget BEGIN -->
     <div class="tradingview-widget-container">
       <div id="tradingview_5723e" style="height: 400px !important;"></div>
@@ -608,6 +608,14 @@
                 </Column>
               </Row>
             </Grid>
+
+            <div class="box">
+              <ContentSwitcher size="xl">
+                  <Switch><ArrowUpRight16 style="margin-right: 0.5rem;" />-</Switch>
+                  <Switch><ArrowDownRight16 style="margin-right: 0.5rem;" />+</Switch>
+              </ContentSwitcher>
+              <!--div>Selected index: {selectedIndex}</div-->
+            </div>
 
             <div class="box">
               <ContentSwitcher size="xl" bind:selectedIndex>
