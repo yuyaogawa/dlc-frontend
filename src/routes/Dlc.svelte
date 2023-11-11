@@ -102,6 +102,7 @@
         R: values.nonces,
         P: values.pubkey,
         invoice: values.invoice,
+        lot: "1",
       }),
     })
 
